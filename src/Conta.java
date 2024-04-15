@@ -1,16 +1,12 @@
 public class Conta {
 
     private int numero;
-
     private Cliente dono;
-
     private double saldo;
-
     private double limite;
-
     private Operacao[] operacoes;
-
     private int proximaOperacao;
+    private int tamArrayOperacoes;
 
     private static int totalContas = 0;
 
@@ -20,7 +16,8 @@ public class Conta {
         this.saldo = saldo;
         this.limite = limite;
 
-        this.operacoes = new Operacao[10];
+        this.tamArrayOperacoes = 10;
+        this.operacoes = new Operacao[this.tamArrayOperacoes];
         this.proximaOperacao = 0;
 
         Conta.totalContas++;
@@ -28,10 +25,12 @@ public class Conta {
 
 
 
-    public boolean sacar(double valor) {
+    public boolean sacar(double valor)
+    {
         if (valor >= 0 && valor <= this.limite) {
             this.saldo -= valor;
 
+            if(this.proximaOperacao == this.tamArrayOperacoes) this.aumentaArrayOperacoes();
             this.operacoes[proximaOperacao] = new Operacao('s', valor);
             this.proximaOperacao++;
             return true;
@@ -43,6 +42,7 @@ public class Conta {
     public void depositar(double valor) {
         this.saldo += valor;
 
+        if(this.proximaOperacao == this.tamArrayOperacoes) this.aumentaArrayOperacoes();
         this.operacoes[proximaOperacao] = new Operacao('d', valor);
         this.proximaOperacao++;
     }
@@ -58,7 +58,7 @@ public class Conta {
 
     public void imprimir() {
         System.out.println("===== Conta " + this.numero + " =====");
-        System.out.println("Dono: " + this.dono.nome);
+        System.out.println("Dono: " + this.dono.getNome());
         System.out.println("Saldo: " + this.saldo);
         System.out.println("Limite: " + this.limite);
         System.out.println("====================");
@@ -72,6 +72,19 @@ public class Conta {
             }
         }
         System.out.println("====================");
+    }
+
+    private void aumentaArrayOperacoes()
+    {
+        Operacao[] arr = new Operacao[2*tamArrayOperacoes];
+
+        for(int i = 0; i < tamArrayOperacoes; i++)
+        {
+            arr[i] = this.operacoes[i];
+        }
+
+        this.operacoes = arr;
+        this.tamArrayOperacoes *= 2;
     }
 
     public int getNumero() {
